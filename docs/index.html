@@ -1,230 +1,249 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eduskunnan äänestykset</title>
 <style>
-:root{--paper:#F3F4F2;--ink:#171A1F;--ink2:#5A616B;--line:#DADDD8;--panel:#FFFFFF;
- --accent:#1E4B7A;--soft:#E6EDF5;--jaa:#2C6E4F;--ei:#A83232;--tyhja:#8A7A3E;--poissa:#79808A;}
-@media (prefers-color-scheme:dark){:root{--paper:#13161A;--ink:#E6E9ED;--ink2:#98A0AA;--line:#293038;
- --panel:#1A1F25;--accent:#84AEDC;--soft:#1D2A38;--jaa:#63B189;--ei:#E1706B;--tyhja:#CBB669;--poissa:#8B939D;}}
-:root[data-theme="dark"]{--paper:#13161A;--ink:#E6E9ED;--ink2:#98A0AA;--line:#293038;
- --panel:#1A1F25;--accent:#84AEDC;--soft:#1D2A38;--jaa:#63B189;--ei:#E1706B;--tyhja:#CBB669;--poissa:#8B939D;}
-:root[data-theme="light"]{--paper:#F3F4F2;--ink:#171A1F;--ink2:#5A616B;--line:#DADDD8;--panel:#FFFFFF;
- --accent:#1E4B7A;--soft:#E6EDF5;--jaa:#2C6E4F;--ei:#A83232;--tyhja:#8A7A3E;--poissa:#79808A;}
+:root{
+  --pohja:#f6f5f2; --kortti:#ffffff; --ink:#1c1b19; --himmea:#6b6862; --viiva:#e0ddd6;
+  --jaa:#2f7d54; --ei:#b03a2e; --tyhja:#8a8378; --poissa:#c9c4ba;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --pohja:#16150f; --kortti:#201f19; --ink:#f2f0ea; --himmea:#a09a8e; --viiva:#33312a;
+    --jaa:#4bbd80; --ei:#e0705f; --tyhja:#9b948a; --poissa:#4a4740; }
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);
- font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-.kuori{max-width:960px;margin:0 auto;padding:0 20px 72px}
-header{border-bottom:1px solid var(--line);padding:36px 0 20px}
-h1{font-family:Georgia,serif;font-weight:600;font-size:30px;line-height:1.15;margin:0 0 6px;
- letter-spacing:-.01em;text-wrap:balance}
-.alaotsikko{color:var(--ink2);margin:0;font-size:14px;max-width:62ch}
-.tunnusluvut{display:flex;gap:26px;flex-wrap:wrap;margin-top:18px}
-.tl b{display:block;font-size:21px;font-variant-numeric:tabular-nums;font-family:Georgia,serif}
-.tl span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
-nav{display:flex;gap:4px;margin:22px 0 14px}
-nav button{font:inherit;font-size:14px;padding:8px 14px;border:1px solid transparent;border-radius:2px;
- background:none;color:var(--ink2);cursor:pointer}
-nav button[aria-selected="true"]{background:var(--soft);color:var(--accent);border-color:var(--line);font-weight:600}
-nav button:focus-visible,input:focus-visible,select:focus-visible,.rivi:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tyokalut{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-input[type=search],select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);
- border-radius:2px;background:var(--panel);color:var(--ink)}
-input[type=search]{flex:1;min-width:220px}
-.maara{color:var(--ink2);font-size:13px;font-variant-numeric:tabular-nums}
-.rivi{background:var(--panel);border:1px solid var(--line);border-radius:2px;margin-bottom:8px;padding:14px 16px;cursor:pointer}
-.rivi:hover{border-color:var(--accent)}
-.meta{display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--ink2);
- font-variant-numeric:tabular-nums;margin-bottom:4px;flex-wrap:wrap}
-.aihe{font-weight:600;margin:0 0 2px;text-wrap:balance}
-.otsikko{color:var(--ink2);font-size:13px;margin:0 0 10px}
-.palkki{display:flex;height:7px;border-radius:1px;overflow:hidden;background:var(--line)}
+body{margin:0;background:var(--pohja);color:var(--ink);
+  font:16px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.kuori{max-width:940px;margin:0 auto;padding:24px 16px 64px}
+header h1{margin:0 0 4px;font-size:28px;letter-spacing:-.01em}
+header p{margin:0;color:var(--himmea);font-size:14px}
+.tunnut{display:flex;gap:20px;margin:16px 0 0;flex-wrap:wrap}
+.tunnut div{background:var(--kortti);border:1px solid var(--viiva);border-radius:10px;padding:10px 14px}
+.tunnut b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.tunnut span{font-size:12px;color:var(--himmea);text-transform:uppercase;letter-spacing:.06em}
+nav{display:flex;gap:8px;margin:24px 0 12px;border-bottom:1px solid var(--viiva)}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;margin-right:14px;
+  font:inherit;font-weight:600;color:var(--himmea);cursor:pointer}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tyokalut{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+.tyokalut label{font-size:12px;color:var(--himmea);text-transform:uppercase;letter-spacing:.06em;width:100%}
+input[type=search],select{font:inherit;padding:9px 12px;border:1px solid var(--viiva);border-radius:8px;
+  background:var(--kortti);color:var(--ink);min-width:220px}
+input[type=search]{flex:1 1 260px}
+.maara{font-size:13px;color:var(--himmea);margin-left:auto;white-space:nowrap}
+.rivi{background:var(--kortti);border:1px solid var(--viiva);border-radius:12px;padding:14px 16px;
+  margin-bottom:10px;cursor:pointer}
+.rivi:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.meta{display:flex;gap:14px;font-size:12px;color:var(--himmea);flex-wrap:wrap;margin-bottom:6px}
+.aihe{margin:0 0 2px;font-weight:600}
+.otsikko{margin:0 0 10px;font-size:14px;color:var(--himmea)}
+.palkki{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--viiva)}
 .palkki i{display:block}
-.luvut{display:flex;gap:14px;margin-top:7px;font-size:12px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
-.luvut span::before{content:"";display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:1px}
-.j::before{background:var(--jaa)}.e::before{background:var(--ei)}
-.t::before{background:var(--tyhja)}.p::before{background:var(--poissa)}
-.avattu{border-color:var(--accent)}
-.tiedot{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-h3{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink2);margin:14px 0 8px;font-weight:600}
+.luvut{display:flex;gap:14px;font-size:13px;margin-top:8px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.luvut .j{color:var(--jaa)} .luvut .e{color:var(--ei)} .luvut .t{color:var(--tyhja)} .luvut .p{color:var(--himmea)}
+.tiedot{margin-top:16px;border-top:1px solid var(--viiva);padding-top:12px}
+.tiedot h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--himmea);margin:16px 0 8px}
 .taulukkokuori{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{text-align:left;padding:5px 10px 5px 0;border-bottom:1px solid var(--line);white-space:nowrap}
-td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
-.nimet{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:2px 14px;margin:0;padding:0;list-style:none;font-size:13px}
-.nimet li{padding:2px 0}
-.ryhma{color:var(--ink2);font-size:11px}
-.linkit{display:flex;gap:16px;font-size:13px;margin-top:14px;flex-wrap:wrap}
-a{color:var(--accent)}
-.tyhjaa{color:var(--ink2);padding:28px 0;text-align:center}
-footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink2);font-size:12px;max-width:72ch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--viiva);white-space:nowrap}
+th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+ul.nimet{list-style:none;margin:0;padding:0;columns:2;column-gap:24px;font-size:14px}
+@media(max-width:560px){ul.nimet{columns:1}}
+ul.nimet li{break-inside:avoid;padding:2px 0}
+.ryhma{color:var(--himmea);font-size:12px}
+.tyhjaa{color:var(--himmea);padding:24px 0}
+footer{margin-top:40px;font-size:12px;color:var(--himmea);border-top:1px solid var(--viiva);padding-top:12px}
 </style>
-
+</head>
+<body>
 <div class="kuori">
 <header>
   <h1>Eduskunnan äänestykset</h1>
-  <p class="alaotsikko">Täysistuntojen äänestykset vuodelta 2026: mistä äänestettiin, miten äänet jakautuivat ja miten jokainen kansanedustaja äänesti nimeltä.</p>
-  <div class="tunnusluvut">
-    <div class="tl"><b>207</b><span>Äänestystä</span></div>
-    <div class="tl"><b>203</b><span>Kansanedustajaa</span></div>
-    <div class="tl"><b>41 193</b><span>Kirjattua ääntä</span></div>
+  <p>Data haetaan automaattisesti eduskunnan avoimesta rajapinnasta kerran vuorokaudessa.</p>
+  <div class="tunnut">
+    <div><b id="lkmA">–</b><span>Äänestystä</span></div>
+    <div><b id="lkmE">–</b><span>Kansanedustajaa</span></div>
+    <div><b id="lkmV">–</b><span>Annettua ääntä</span></div>
   </div>
 </header>
+
 <nav role="tablist">
   <button id="v-aiheet" role="tab" aria-selected="true">Äänestykset</button>
   <button id="v-edustaja" role="tab" aria-selected="false">Kansanedustaja</button>
 </nav>
+
 <div class="tyokalut" id="aiheet-tyokalut">
-  <input type="search" id="haku" placeholder="Hae aiheesta, asiakirjasta tai päivämäärästä" aria-label="Hae äänestyksistä">
+  <label for="haku">Hae äänestystä</label>
+  <input type="search" id="haku" placeholder="Kirjoita aihe tai päivämäärä">
   <span class="maara" id="maara"></span>
 </div>
+
 <div class="tyokalut" id="edustaja-tyokalut" hidden>
-  <input type="search" id="hakuEdustaja" placeholder="Hae kansanedustajan nimellä" aria-label="Hae kansanedustajan nimellä">
-  <select id="valEdustaja" aria-label="Valitse kansanedustaja">
-    <option value="0">Aalto-Setälä Pauli (kok)</option><option value="1">Adlercreutz Anders (r)</option><option value="2">Aittakumpu Pekka (ps)</option><option value="3">Alametsä Alviina (vihr)</option><option value="4">Andersson Otto (r)</option><option value="5">Antikainen Sanna (ps)</option><option value="6">Asell Marko (sd)</option><option value="7">Autto Heikki (kok)</option><option value="8">Berg Kim (sd)</option><option value="9">Bergbom Miko (ps)</option><option value="10">Bergqvist Sandra (r)</option><option value="11">Biaudet Eva (r)</option><option value="12">Castrén Maaret (kok)</option><option value="13">Diarra Fatim (vihr)</option><option value="14">Eerola Juho (ps)</option><option value="15">Eestilä Markku (kok)</option><option value="16">Elo Tiina (vihr)</option><option value="17">Elomaa Ritva (ps)</option><option value="18">Eloranta Eeva-Johanna (sd)</option><option value="19">Eskelinen Seppo (sd)</option><option value="20">Essayah Sari (kd)</option><option value="21">Fagerström Noora (kok)</option><option value="22">Filatov Tarja (sd)</option><option value="23">Forsgrén Bella (vihr)</option><option value="24">Furuholm Timo (vas)</option><option value="25">Garedew Kaisa (ps)</option><option value="26">Gebhard Elisa (sd)</option><option value="27">Grahn-Laasonen Sanni (kok)</option><option value="28">Haatainen Tuula (sd)</option><option value="29">Haavisto Pekka (vihr)</option><option value="30">Hamari Lotta (sd)</option><option value="31">Harakka Timo (sd)</option><option value="32">Harjanne Atte (vihr)</option><option value="33">Harkimo Harry (liik)</option><option value="34">Heikkinen Janne (kok)</option><option value="35">Heinonen Timo (kok)</option><option value="36">Heinäluoma Eveliina (sd)</option><option value="201">Hemmilä Pertti (kok)</option><option value="37">Hiltunen Pia (sd)</option><option value="38">Holopainen Hanna (vihr)</option><option value="199">Holopainen Mari (vihr)</option><option value="39">Honkasalo Veronika (vas)</option><option value="40">Honkonen Petri (kesk)</option><option value="41">Hopsu Inka (vihr)</option><option value="42">Hoskonen Hannu (kesk)</option><option value="43">Huhtasaari Laura (ps)</option><option value="44">Huru Petri (ps)</option><option value="45">Hyrkkö Saara (vihr)</option><option value="46">Häkkänen Antti (kok)</option><option value="47">Hänninen Juha (kok)</option><option value="48">Ikonen Anna-Kaisa (kok)</option><option value="49">Immonen Tomi (ps)</option><option value="50">Ingo Christoffer (r)</option><option value="51">Jokelainen Jessi (vas)</option><option value="52">Jukkola Janne (kok)</option><option value="53">Junnila Vilhelm (ps)</option><option value="54">Juuso Kaisa (ps)</option><option value="55">Juvonen Arja (ps)</option><option value="56">Jäntti Aleksi (kok)</option><option value="57">Kaarisalo Riitta (sd)</option><option value="58">Kaikkonen Antti (kesk)</option><option value="59">Kaleva Atte (kok)</option><option value="60">Kalli Eeva (kesk)</option><option value="61">Kallio Vesa (kesk)</option><option value="62">Kalmari Anne (kesk)</option><option value="63">Kangas Antti (ps)</option><option value="64">Kari Mika (sd)</option><option value="65">Karlsson Anette (sd)</option><option value="66">Kauma Pia (kok)</option><option value="67">Kaunisto Ville (kok)</option><option value="68">Kaunistola Mari (kok)</option><option value="69">Kemppi Hilkka (kesk)</option><option value="70">Keskisarja Teemu (ps)</option><option value="71">Keto-Huovinen Pihla (kok)</option><option value="202">Keto-Huovinen Pihla (erk)</option><option value="72">Kettunen Tuomas (kesk)</option><option value="73">Kiljunen Kimmo (sd)</option><option value="74">Kilpi Marko (kok)</option><option value="75">Kinnari Teemu (kok)</option><option value="76">Kiuru Krista (sd)</option><option value="77">Kiuru Pauli (kok)</option><option value="78">Kivelä Mai (vas)</option><option value="79">Kokko Jani (sd)</option><option value="80">Kontu Mauri (kesk)</option><option value="81">Kontula Anna (vas)</option><option value="82">Koponen Ari (ps)</option><option value="83">Kopra Jukka (kok)</option><option value="84">Koskela Jari (ps)</option><option value="85">Koskela Minja (vas)</option><option value="86">Koskinen Johannes (sd)</option><option value="87">Kosonen Hanna (kesk)</option><option value="88">Koulumies Terhi (kok)</option><option value="89">Kumpula-Natri Miapetra (sd)</option><option value="90">Kurvinen Antti (kesk)</option><option value="91">Kvarnström Johan (sd)</option><option value="92">Kymäläinen Suna (sd)</option><option value="93">Laakso Sheikki (ps)</option><option value="94">Lahdenperä Milla (kok)</option><option value="95">Laiho Mia (kok)</option><option value="96">Laine-Nousimaa Hanna (sd)</option><option value="97">Lehtinen Rami (ps)</option><option value="98">Limnell Jarno (kok)</option><option value="99">Lindberg Jarmo (kok)</option><option value="100">Lindén Aki (sd)</option><option value="101">Lindtman Antti (sd)</option><option value="102">Lintilä Mika (kesk)</option><option value="103">Lohi Markus (kesk)</option><option value="104">Lohikoski Pia (vas)</option><option value="105">Lundén Mikko (ps)</option><option value="106">Lyly Lauri (sd)</option><option value="107">Löfström Mats (r)</option><option value="108">Malm Niina (sd)</option><option value="109">Marttila Helena (sd)</option><option value="110">Marttinen Matias (kok)</option><option value="111">Mattila Hanna-Leena (kesk)</option><option value="112">Mehtälä Timo (kesk)</option><option value="113">Meri Leena (ps)</option><option value="114">Meriluoto Laura (vas)</option><option value="115">Merinen Ville (sd)</option><option value="116">Mikkonen Anna-Kristiina (sd)</option><option value="117">Mikkonen Krista (vihr)</option><option value="118">Multala Sari (kok)</option><option value="119">Mäenpää Juha (ps)</option><option value="120">Mäkelä Jani (ps)</option><option value="121">Mäkynen Matias (sd)</option><option value="122">Niemi Veijo (ps)</option><option value="123">Nieminen Mira (ps)</option><option value="124">Nikkanen Saku (sd)</option><option value="125">Norrback Anders (r)</option><option value="126">Oinas-Panuma Olga (kesk)</option><option value="127">Ojala-Niemelä Johanna (sd)</option><option value="128">Ollikainen Mikko (r)</option><option value="129">Orpo Petteri (kok)</option><option value="130">Ovaska Jouni (kesk)</option><option value="131">Paasi Martin (kok)</option><option value="132">Partanen Karoliina (kok)</option><option value="133">Pekonen Aino-Kaisa (vas)</option><option value="134">Peltokangas Mauri (ps)</option><option value="135">Perholehto Pinja (sd)</option><option value="136">Piisinen Jorma (ps)</option><option value="137">Pitko Jenni (vihr)</option><option value="138">Polvinen Mikko (kesk)</option><option value="139">Poutala Mika (kd)</option><option value="140">Puisto Sakari (ps)</option><option value="141">Purra Riikka (ps)</option><option value="142">Päivärinta Susanne (kok)</option><option value="143">Ranne Lulu (ps)</option><option value="144">Rantanen Mari (ps)</option><option value="145">Rantanen Piritta (sd)</option><option value="146">Rasinkangas Merja (ps)</option><option value="147">Razmyar Nasima (sd)</option><option value="148">Reijonen Minna (ps)</option><option value="149">Riipi Mika (kesk)</option><option value="150">Rintamäki Anne (ps)</option><option value="151">Risikko Paula (kok)</option><option value="152">Ronkainen Jari (ps)</option><option value="153">Rostila Onni (ps)</option><option value="154">Rydman Wille (ps)</option><option value="155">Räsänen Hanna (kesk)</option><option value="156">Räsänen Joona (sd)</option><option value="157">Räsänen Päivi (kd)</option><option value="158">Sammallahti Tere (kok)</option><option value="159">Sarkkinen Hanna (vas)</option><option value="160">Sarkomaa Sari (kok)</option><option value="161">Satonen Arto (kok)</option><option value="162">Savio Sami (ps)</option><option value="163">Savola Mikko (kesk)</option><option value="164">Seppänen Sara (ps)</option><option value="165">Sillanpää Pia (ps)</option><option value="166">Simula Jenna (ps)</option><option value="167">Siponen Markku (kesk)</option><option value="168">Sirén Saara-Sofia (kok)</option><option value="169">Skinnari Ville (sd)</option><option value="170">Strand Joakim (r)</option><option value="171">Strandman Jaana (ps)</option><option value="172">Suhonen Timo (sd)</option><option value="173">Talvitie Mari-Leena (kok)</option><option value="174">Tanus Sari (kd)</option><option value="175">Tavio Ville (ps)</option><option value="176">Tuppurainen Tytti (sd)</option><option value="177">Tynkkynen Oras (vihr)</option><option value="178">Valkonen Ville (kok)</option><option value="180">Valtola Oskari (kok)</option><option value="181">Valtonen Elina (kok)</option><option value="183">Vestman Heikki (kok)</option><option value="185">Vigelius Joakim (ps)</option><option value="186">Viitala Juha (sd)</option><option value="187">Viitanen Pia (sd)</option><option value="188">Vikman Sofia (kok)</option><option value="189">Viljanen Eerikki (kesk)</option><option value="200">Virolainen Anne-Mari (kok)</option><option value="190">Virta Sofia (vihr)</option><option value="191">Vornanen Timo (tv)</option><option value="192">Vuornos Henrik (kok)</option><option value="193">Vähämäki Ville (ps)</option><option value="194">Väyrynen Ville (kok)</option><option value="195">Väätäinen Tuula (sd)</option><option value="179">Wallinheimo Sinuhe (kok)</option><option value="182">Werning Paula (sd)</option><option value="184">Wickström Henrik (r)</option><option value="196">Yrttiaho Johannes (vas)</option><option value="197">Zyskowicz Ben (kok)</option><option value="198">Östman Peter (kd)</option>
-  </select>
-  <select id="valRajaus" aria-label="Rajaa äänen mukaan">
+  <label for="hakuEdustaja">Hae kansanedustaja</label>
+  <input type="search" id="hakuEdustaja" placeholder="Kirjoita nimi, esim. Orpo">
+  <select id="valEdustaja"></select>
+  <select id="valRajaus">
     <option value="">Kaikki äänet</option>
     <option value="J">Vain Jaa</option>
     <option value="E">Vain Ei</option>
     <option value="T">Vain Tyhjää</option>
     <option value="P">Vain Poissa</option>
   </select>
-  <span class="maara" id="loytyi"></span>
   <span class="maara" id="maara2"></span>
 </div>
-<main id="sisalto"></main>
+
+<main id="sisalto"><p class="tyhjaa">Ladataan…</p></main>
+
 <footer>
-  Lähde: eduskunnan avoin data (avoindata.eduskunta.fi). Aineisto haettu 22.07.2026.
-  Kenttä &rdquo;otsikko&rdquo; kertoo äänestysasetelman, eikä se aina kerro kumpi vaihtoehto oli Jaa —
-  jos teet aineistosta päätelmiä kannatuksesta tai vastustuksesta, tarkista asetelma pöytäkirjasta.
+  Lähde: eduskunnan avoin rajapinta api.eduskunta.fi. Klikkaa äänestystä nähdäksesi ryhmäjakauman ja nimet.
 </footer>
-</div>
-<script id="sovellus-koodi" type="text/plain">
-const D = window.__DATA__;
-const NIMI = {J:"Jaa", E:"Ei", T:"Tyhjää", P:"Poissa"};
-const el = (s)=>document.querySelector(s);
-function esc(s){
-  return String(s==null?"":s).replace(/[&<>"]/g, function(c){
-    return c==="&"?"&amp;":c==="<"?"&lt;":c===">"?"&gt;":"&quot;";
+</div><script>
+var D = null, nakyma = "aiheet", haku = "", avoin = null, edustaja = 0, rajaus = "";
+var NIMI = { J: "Jaa", E: "Ei", T: "Tyhjää", P: "Poissa" };
+function el(s) { return document.querySelector(s); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+    return c === "&" ? "&amp;" : c === "<" ? "&lt;" : c === ">" ? "&gt;" : "&quot;";
   });
 }
-function pvm(s){ var o=s.split("-"); return o[2]+"."+o[1]+"."+o[0]; }
-var nakyma="aiheet", haku="", avoin=null, edustaja=0, rajaus="";
-
-function palkki(a){
-  var yht=(a.jaa+a.ei+a.tyhjaa+a.poissa)||1;
-  function o(n,v){ return n ? '<i style="width:'+(n/yht*100)+'%;background:var(--'+v+')"></i>' : ""; }
-  return '<div class="palkki">'+o(a.jaa,"jaa")+o(a.ei,"ei")+o(a.tyhjaa,"tyhja")+o(a.poissa,"poissa")+'</div>';
+function pvm(s) { var o = String(s).split("-"); return o.length === 3 ? o[2] + "." + o[1] + "." + o[0] : String(s); }
+function palkki(a) {
+  var yht = (a.jaa + a.ei + a.tyhjaa + a.poissa) || 1;
+  function o(n, v) { return n ? '<i style="width:' + (n / yht * 100) + '%;background:var(--' + v + ')"></i>' : ""; }
+  return '<div class="palkki">' + o(a.jaa, "jaa") + o(a.ei, "ei") + o(a.tyhjaa, "tyhja") + o(a.poissa, "poissa") + '</div>';
 }
-function luvut(j,e,t,p){
-  return '<div class="luvut"><span class="j">Jaa '+j+'</span><span class="e">Ei '+e+
-    '</span><span class="t">'+NIMI.T+' '+t+'</span><span class="p">Poissa '+p+'</span></div>';
+function luvut(j, e, t, p) {
+  return '<div class="luvut"><span class="j">Jaa ' + j + '</span><span class="e">Ei ' + e +
+    '</span><span class="t">Tyhjää ' + t + '</span><span class="p">Poissa ' + p + '</span></div>';
 }
-function nimilista(a,koodi){
-  var ni=a.aanet.filter(function(x){return x[1]===koodi;}).map(function(x){return D.edustajat[x[0]];})
-    .sort(function(x,y){return x.sukunimi.localeCompare(y.sukunimi,"fi");});
-  if(!ni.length) return "";
-  return '<h3>'+NIMI[koodi]+' — '+ni.length+'</h3><ul class="nimet">'+
-    ni.map(function(e){return '<li>'+esc(e.sukunimi)+' '+esc(e.etunimi)+' <span class="ryhma">'+esc(e.ryhma)+'</span></li>';}).join("")+'</ul>';
+function nimilista(a, k) {
+  var ni = a.aanet.filter(function (x) { return x[1] === k; }).map(function (x) { return D.edustajat[x[0]]; })
+    .sort(function (x, y) { return x.sukunimi.localeCompare(y.sukunimi, "fi"); });
+  if (!ni.length) return "";
+  return '<h3>' + NIMI[k] + ' — ' + ni.length + '</h3><ul class="nimet">' +
+    ni.map(function (e) {
+      return '<li>' + esc(e.sukunimi) + ' ' + esc(e.etunimi) + ' <span class="ryhma">' + esc(e.ryhma) + '</span></li>';
+    }).join("") + '</ul>';
 }
-function tiedot(a){
-  var h='<div class="tiedot">';
-  if(a.ryhmat && a.ryhmat.length){
-    h+='<h3>Eduskuntaryhmittäin</h3><div class="taulukkokuori"><table><thead><tr><th>Ryhmä</th>'+
-      '<th class="n">Jaa</th><th class="n">Ei</th><th class="n">'+NIMI.T+'</th><th class="n">Poissa</th></tr></thead><tbody>'+
-      a.ryhmat.map(function(r){return '<tr><td>'+esc(r.ryhma)+'</td><td class="n">'+r.jaa+'</td><td class="n">'+r.ei+
-        '</td><td class="n">'+r.tyhjaa+'</td><td class="n">'+r.poissa+'</td></tr>';}).join("")+'</tbody></table></div>';
+function tiedot(a) {
+  var h = '<div class="tiedot">';
+  if (a.ryhmat && a.ryhmat.length) {
+    h += '<h3>Eduskuntaryhmittäin</h3><div class="taulukkokuori"><table><thead><tr><th>Ryhmä</th>' +
+      '<th class="n">Jaa</th><th class="n">Ei</th><th class="n">Tyhjää</th><th class="n">Poissa</th></tr></thead><tbody>' +
+      a.ryhmat.map(function (r) {
+        return '<tr><td>' + esc(r.ryhma) + '</td><td class="n">' + r.jaa + '</td><td class="n">' + r.ei +
+          '</td><td class="n">' + r.tyhjaa + '</td><td class="n">' + r.poissa + '</td></tr>';
+      }).join("") + '</tbody></table></div>';
   }
-  h+=["J","E","T","P"].map(function(k){return nimilista(a,k);}).join("");
-  var L=[];
-  if(a.asiaUrl) L.push('<a href="https://www.eduskunta.fi'+esc(a.asiaUrl)+'" target="_blank" rel="noopener">'+esc(a.asia||"Asiakirja")+'</a>');
-  if(a.poytakirjaUrl) L.push('<a href="https://www.eduskunta.fi'+esc(a.poytakirjaUrl)+'" target="_blank" rel="noopener">'+esc(a.poytakirja||"Pöytäkirja")+'</a>');
-  if(L.length) h+='<div class="linkit">'+L.join("")+'</div>';
-  return h+'</div>';
+  h += ["J", "E", "T", "P"].map(function (k) { return nimilista(a, k); }).join("");
+  return h + '</div>';
 }
-function kortti(a,lisa){
-  return '<article class="rivi'+(avoin===a.id?" avattu":"")+'" tabindex="0" data-id="'+esc(a.id)+'">'+
-    '<div class="meta"><span>'+pvm(a.pvm)+'</span><span>Istunto '+esc(a.istunto)+'</span>'+
-    (a.asia?'<span>'+esc(a.asia)+'</span>':"")+(lisa||"")+'</div>'+
-    '<p class="aihe">'+esc(a.kohta||"(ei aihetta)")+'</p>'+
-    '<p class="otsikko">'+esc(a.otsikko||"")+'</p>'+
-    palkki(a)+luvut(a.jaa,a.ei,a.tyhjaa,a.poissa)+(avoin===a.id?tiedot(a):"")+'</article>';
+function kortti(a, lisa) {
+  return '<article class="rivi" tabindex="0" data-id="' + esc(a.id) + '">' +
+    '<div class="meta"><span>' + pvm(a.pvm) + '</span><span>Istunto ' + esc(a.istunto) + '</span>' + (lisa || "") + '</div>' +
+    '<p class="aihe">' + esc(a.kohta || "(ei aihetta)") + '</p>' +
+    '<p class="otsikko">' + esc(a.otsikko || "") + '</p>' +
+    palkki(a) + luvut(a.jaa, a.ei, a.tyhjaa, a.poissa) + (avoin === a.id ? tiedot(a) : "") + '</article>';
 }
-function piirraAiheet(){
-  var q=haku.trim().toLowerCase();
-  var lista = q ? D.aanestykset.filter(function(a){
-      return ((a.kohta||"")+" "+(a.otsikko||"")+" "+(a.asia||"")+" "+a.pvm).toLowerCase().indexOf(q)>=0;
-    }) : D.aanestykset;
-  el("#maara").textContent = lista.length+" äänestystä";
+function piirraAiheet() {
+  var q = haku.trim().toLowerCase();
+  var lista = q ? D.aanestykset.filter(function (a) {
+    return ((a.kohta || "") + " " + (a.otsikko || "") + " " + pvm(a.pvm) + " " + a.pvm).toLowerCase().indexOf(q) >= 0;
+  }) : D.aanestykset;
+  el("#maara").textContent = lista.length + " äänestystä";
   el("#sisalto").innerHTML = lista.length
-    ? lista.map(function(a){return kortti(a,"");}).join("")
-    : '<p class="tyhjaa">Ei osumia haulla ”'+esc(haku)+'”.</p>';
+    ? lista.map(function (a) { return kortti(a, ""); }).join("")
+    : '<p class="tyhjaa">Ei osumia haulla ”' + esc(haku) + '”.</p>';
 }
-function piirraEdustaja(){
-  var e=D.edustajat[edustaja], rivit=[];
-  for(var i=0;i<D.aanestykset.length;i++){
-    var a=D.aanestykset[i];
-    var p=a.aanet.find(function(x){return x[0]===edustaja;});
-    if(p) rivit.push({a:a,k:p[1]});
-  }
-  var nayta = rajaus ? rivit.filter(function(r){return r.k===rajaus;}) : rivit;
-  var t={J:0,E:0,T:0,P:0};
-  rivit.forEach(function(r){ if(r.k in t) t[r.k]++; });
-  el("#maara2").textContent = nayta.length+" / "+rivit.length+" äänestystä";
-  el("#sisalto").innerHTML =
-    '<div class="rivi" style="cursor:default"><p class="aihe">'+esc(e.sukunimi)+' '+esc(e.etunimi)+
-    ' <span class="ryhma">'+esc(e.ryhma)+'</span></p>'+luvut(t.J,t.E,t.T,t.P)+'</div>'+
-    (nayta.length
-      ? nayta.map(function(r){return kortti(r.a,'<span style="font-weight:600;color:var(--ink)">Äänesti: '+NIMI[r.k]+'</span>');}).join("")
-      : '<p class="tyhjaa">Ei äänestyksiä tällä rajauksella.</p>');
-}
-function piirra(){
-  el("#aiheet-tyokalut").hidden = nakyma!=="aiheet";
-  el("#edustaja-tyokalut").hidden = nakyma!=="edustaja";
-  el("#v-aiheet").setAttribute("aria-selected", String(nakyma==="aiheet"));
-  el("#v-edustaja").setAttribute("aria-selected", String(nakyma==="edustaja"));
-  if(nakyma==="aiheet") piirraAiheet(); else piirraEdustaja();
-}
-function avaaSulje(target){
-  var r = target.closest && target.closest(".rivi[data-id]");
-  if(!r) return false;
-  avoin = (avoin===r.dataset.id) ? null : r.dataset.id;
-  piirra();
-  return true;
-}
-document.addEventListener("click", function(ev){ avaaSulje(ev.target); });
-document.addEventListener("keydown", function(ev){
-  if(ev.key!=="Enter" && ev.key!==" ") return;
-  if(avaaSulje(ev.target)) ev.preventDefault();
-});
-el("#v-aiheet").onclick=function(){nakyma="aiheet";avoin=null;piirra();};
-el("#v-edustaja").onclick=function(){nakyma="edustaja";avoin=null;piirra();};
-el("#haku").oninput=function(e){haku=e.target.value;avoin=null;piirraAiheet();};
-el("#valEdustaja").onchange=function(e){edustaja=+e.target.value;avoin=null;piirraEdustaja();};
-el("#valRajaus").onchange=function(e){rajaus=e.target.value;avoin=null;piirraEdustaja();};
-function taytaValinta(q){
-  var sel=el("#valEdustaja"); var ql=(q||"").trim().toLowerCase();
-  var lista=D.edustajat.map(function(e,i){return {e:e,i:i};})
-    .filter(function(o){ return !ql || (o.e.sukunimi+" "+o.e.etunimi+" "+o.e.ryhma).toLowerCase().indexOf(ql)>=0; })
-    .sort(function(a,b){return a.e.sukunimi.localeCompare(b.e.sukunimi,"fi");});
-  sel.innerHTML = lista.map(function(o){return "<option value=\""+o.i+"\">"+esc(o.e.sukunimi)+" "+esc(o.e.etunimi)+" ("+esc(o.e.ryhma)+")</option>";}).join("");
-  el("#loytyi").textContent = lista.length+" edustajaa";
-  if(lista.length){
-    var onko=false; for(var k=0;k<lista.length;k++){ if(lista[k].i===edustaja){onko=true;break;} }
-    if(!onko) edustaja=lista[0].i;
-    sel.value=String(edustaja);
+function taytaEdustajat(q) {
+  var sel = el("#valEdustaja"), ql = (q || "").trim().toLowerCase();
+  var lista = D.edustajat.map(function (e, i) { return { e: e, i: i }; })
+    .filter(function (o) {
+      return !ql || (o.e.sukunimi + " " + o.e.etunimi + " " + o.e.ryhma).toLowerCase().indexOf(ql) >= 0;
+    })
+    .sort(function (a, b) { return a.e.sukunimi.localeCompare(b.e.sukunimi, "fi"); });
+  sel.innerHTML = lista.map(function (o) {
+    return '<option value="' + o.i + '">' + esc(o.e.sukunimi) + ' ' + esc(o.e.etunimi) + ' (' + esc(o.e.ryhma) + ')</option>';
+  }).join("");
+  if (lista.length) {
+    var onko = false;
+    for (var k = 0; k < lista.length; k++) { if (lista[k].i === edustaja) { onko = true; break; } }
+    if (!onko) edustaja = lista[0].i;
+    sel.value = String(edustaja);
   }
   return lista.length;
 }
-el("#hakuEdustaja").oninput=function(e){
-  avoin=null;
-  if(taytaValinta(e.target.value)>0){ piirraEdustaja(); }
-  else { el("#maara2").textContent=""; el("#sisalto").innerHTML="<p class=\"tyhjaa\">Ei osumia nimellä ”"+esc(e.target.value)+"”.</p>"; }
+function piirraEdustaja() {
+  var e = D.edustajat[edustaja], rivit = [];
+  for (var i = 0; i < D.aanestykset.length; i++) {
+    var a = D.aanestykset[i];
+    var p = null;
+    for (var j = 0; j < a.aanet.length; j++) { if (a.aanet[j][0] === edustaja) { p = a.aanet[j]; break; } }
+    if (p) rivit.push({ a: a, k: p[1] });
+  }
+  var nayta = rajaus ? rivit.filter(function (r) { return r.k === rajaus; }) : rivit;
+  var t = { J: 0, E: 0, T: 0, P: 0 };
+  for (var m = 0; m < rivit.length; m++) { if (rivit[m].k in t) t[rivit[m].k]++; }
+  el("#maara2").textContent = nayta.length + " / " + rivit.length + " äänestystä";
+  el("#sisalto").innerHTML =
+    '<div class="rivi" style="cursor:default"><p class="aihe">' + esc(e.sukunimi) + ' ' + esc(e.etunimi) +
+    ' <span class="ryhma">' + esc(e.ryhma) + '</span></p>' + luvut(t.J, t.E, t.T, t.P) + '</div>' +
+    (nayta.length
+      ? nayta.map(function (r) {
+          return kortti(r.a, '<span style="font-weight:600;color:var(--ink)">Äänesti: ' + NIMI[r.k] + '</span>');
+        }).join("")
+      : '<p class="tyhjaa">Ei äänestyksiä tällä rajauksella.</p>');
+}
+function piirra() {
+  el("#aiheet-tyokalut").hidden = nakyma !== "aiheet";
+  el("#edustaja-tyokalut").hidden = nakyma !== "edustaja";
+  el("#v-aiheet").setAttribute("aria-selected", String(nakyma === "aiheet"));
+  el("#v-edustaja").setAttribute("aria-selected", String(nakyma === "edustaja"));
+  if (nakyma === "aiheet") piirraAiheet(); else piirraEdustaja();
+}
+function avaaSulje(t) {
+  var r = t && t.closest ? t.closest(".rivi[data-id]") : null;
+  if (!r) return false;
+  avoin = (avoin === r.dataset.id) ? null : r.dataset.id;
+  piirra();
+  return true;
+}
+document.addEventListener("click", function (ev) { if (D) avaaSulje(ev.target); });
+document.addEventListener("keydown", function (ev) {
+  if (!D || (ev.key !== "Enter" && ev.key !== " ")) return;
+  if (avaaSulje(ev.target)) ev.preventDefault();
+});
+el("#v-aiheet").onclick = function () { if (!D) return; nakyma = "aiheet"; avoin = null; piirra(); };
+el("#v-edustaja").onclick = function () { if (!D) return; nakyma = "edustaja"; avoin = null; piirra(); };
+el("#haku").oninput = function (e) { if (!D) return; haku = e.target.value; avoin = null; piirraAiheet(); };
+el("#valEdustaja").onchange = function (e) { edustaja = +e.target.value; avoin = null; piirraEdustaja(); };
+el("#valRajaus").onchange = function (e) { rajaus = e.target.value; avoin = null; piirraEdustaja(); };
+el("#hakuEdustaja").oninput = function (e) {
+  if (!D) return;
+  avoin = null;
+  if (taytaEdustajat(e.target.value) > 0) { piirraEdustaja(); }
+  else {
+    el("#maara2").textContent = "";
+    el("#sisalto").innerHTML = '<p class="tyhjaa">Ei kansanedustajaa nimellä ”' + esc(e.target.value) + '”.</p>';
+  }
 };
-taytaValinta("");
-piirra();
+fetch("data.json").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(function (d) {
+    D = d;
+    el("#lkmA").textContent = d.aanestykset.length;
+    el("#lkmE").textContent = d.edustajat.length;
+    var v = 0;
+    for (var i = 0; i < d.aanestykset.length; i++) { v += d.aanestykset[i].aanet.length; }
+    el("#lkmV").textContent = v.toLocaleString("fi-FI");
+    taytaEdustajat("");
+    piirra();
+  })
+  .catch(function (e) {
+    el("#sisalto").innerHTML = '<p class="tyhjaa">Datan haku epäonnistui: ' + esc(e.message) +
+      '<br>Aja GitHubin Actions-välilehdellä työnkulku <b>Paivita aanestysdata</b>.</p>';
+  });
 </script>
-<script>var URL_DATA="https://raw.githubusercontent.com/paavali87-svg/aanestykset/main/docs/data.json";
-var kuori=document.getElementById("sisalto");
-kuori.innerHTML='<p class="tyhjaa">Haetaan äänestysdataa…</p>';
-fetch(URL_DATA).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
- .then(function(d){ window.__DATA__=d; var s=document.createElement("script");
-   s.textContent=document.getElementById("sovellus-koodi").textContent; document.body.appendChild(s); })
- .catch(function(e){ kuori.innerHTML='<p class="tyhjaa">Datan haku epäonnistui: '+e.message+'<br>Osoite: '+URL_DATA+'</p>'; });</script>
+</body>
+</html>
