@@ -1,0 +1,40 @@
+name: Paivita aanestysdata
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paivita
+  cancel-in-progress: false
+
+jobs:
+  paivita:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nouda repo
+        uses: actions/checkout@v4
+      - name: Asenna Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Hae uusimmat aanestykset
+        run: node hae-api.js
+      - name: Tallenna muutos jos dataa tuli lisaa
+        run: |
+          if git diff --quiet -- docs/data.json; then
+            echo "Ei muutoksia dataan."
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add docs/data.json
+            git commit -m "Paivita aanestysdata"
+            git push
+            echo "Data paivitetty."
+          fi
