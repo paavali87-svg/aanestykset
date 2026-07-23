@@ -1,12 +1,13 @@
 # Eduskunnan äänestykset
 
 Sivu, joka näyttää eduskunnan täysistuntojen äänestykset. Voit selata äänestyksiä aiheen
-mukaan tai **hakea yksittäisen kansanedustajan nimellä** ja katsoa, miten hän on äänestänyt.
+mukaan tai **Kansanedustaja-välilehdellä hakea yksittäisen kansanedustajan nimellä** ja
+katsoa, miten hän on äänestänyt.
 
 Data haetaan eduskunnan avoimesta rajapinnasta **GitHubin omilla palvelimilla kerran
 vuorokaudessa** (GitHub Actions, klo 02 UTC). Sivu pysyy ajan tasalla itsestään — omaa
-konetta ei tarvita sen jälkeen kun sivu on kerran julkaistu. Kaikki tämä on GitHubissa
-ilmaista julkisille repoille.
+konetta ei tarvita sen jälkeen kun sivu on kerran julkaistu. Tämä on GitHubissa ilmaista
+julkisille repoille.
 
 ---
 
@@ -41,17 +42,15 @@ Sitä **ei tarvitse** ajaa datan päivittämiseksi — se hoituu itsestään jok
 Toimii millä tahansa käyttöjärjestelmällä, pelkällä selaimella.
 
 1. Mene tämän repon GitHub-sivulle ja paina oikeasta yläkulmasta **Fork** → **Create fork**.
-   Saat repon omalle tunnuksellesi.
-2. Avaa oman kopiosi **Actions**-välilehti. GitHub kysyy lupaa: paina
+2. Avaa oman kopiosi **Actions**-välilehti. Paina
    **I understand my workflows, go ahead and enable them**.
 3. Mene **Settings** → vasemmalta **Pages**.
    - *Source*: **Deploy from a branch**
    - *Branch*: **main**, kansio **/docs** → **Save**
-4. Palaa **Actions**-välilehdelle, valitse vasemmalta työnkulku **Paivita aanestysdata** ja
-   paina oikealta **Run workflow** → **Run workflow**.
-5. Odota, että ajon viereen tulee vihreä ruksi (1–3 min). Sivusi on nyt osoitteessa
-   `https://<käyttäjätunnuksesi>.github.io/aanestykset/`
-   (osoite näkyy myös Settings → Pages -sivulla).
+4. Palaa **Actions**-välilehdelle, valitse työnkulku **Paivita aanestysdata** ja paina
+   **Run workflow** → **Run workflow**.
+5. Odota vihreä ruksi (1–3 min). Sivusi on osoitteessa
+   `https://<käyttäjätunnuksesi>.github.io/aanestykset/`.
 
 Tämän jälkeen mitään ei tarvitse tehdä. Työnkulku ajaa itsensä joka yö klo 02 UTC.
 
@@ -61,25 +60,24 @@ Tämän jälkeen mitään ei tarvitse tehdä. Työnkulku ajaa itsensä joka yö 
 
 | Tiedosto | Mitä tekee |
 |---|---|
-| `docs/index.html` | Sivu, joka näyttää datan. Kaksi välilehteä: Äänestykset ja Kansanedustaja. |
+| `docs/index.html` | Sivu, joka näyttää datan. Välilehdet: Äänestykset ja Kansanedustaja (nimihaku). |
 | `docs/data.json` | Haettu data. **Syntyy GitHubissa automaattisesti** — sitä ei ole repossa etukäteen. |
 | `hae-api.js` | Hakee äänestykset rajapinnasta ja kirjoittaa `docs/data.json`. Ajetaan GitHubin palvelimella. |
-| `.github/workflows/paivita.yml` | GitHub Actions -työnkulku: ajaa haun kerran vuorokaudessa ja tallentaa tuloksen. |
+| `.github/workflows/paivita.yml` | GitHub Actions -työnkulku: ajaa haun kerran vuorokaudessa. |
 | `asenna.ps1` | Julkaisee kaiken GitHub-tunnuksellesi. |
 | `Asenna.cmd` | Käynnistää `asenna.ps1`:n kaksoisklikkauksella. |
 
 ## Jos jokin menee pieleen
 
-| Oire | Syy ja korjaus |
+| Oire | Korjaus |
 |---|---|
-| Sivulla lukee "Datan haku epäonnistui: HTTP 404" | `docs/data.json` puuttuu vielä. Aja Actions-välilehdellä työnkulku **Paivita aanestysdata** ja odota vihreä ruksi. |
+| Sivulla "Datan haku epäonnistui: HTTP 404" | `docs/data.json` puuttuu vielä. Aja Actions-välilehdellä **Paivita aanestysdata** ja odota vihreä ruksi. |
 | Sivun osoite antaa 404 | Pages ei ole päällä. Settings → Pages → branch **main**, kansio **/docs** → Save. Odota minuutti. |
-| Actions-välilehti on tyhjä | Työnkulut on kytkettävä forkissa päälle: Actions → *I understand my workflows...*. |
-| Ajo epäonnistui punaisella | Avaa ajo Actions-välilehdeltä ja katso vaiheen **Hae aanestysdata** loki. |
-| `Asenna.cmd` ei tee mitään | Klikkaa hiiren oikealla → *Suorita järjestelmänvalvojana*, tai avaa PowerShell ja aja `powershell -ExecutionPolicy Bypass -File asenna.ps1`. |
+| Actions-välilehti on tyhjä | Kytke työnkulut forkissa päälle: Actions → *I understand my workflows...*. |
+| Ajo epäonnistui punaisella | Avaa ajo ja katso vaiheen **Hae aanestysdata** loki. |
+| `Asenna.cmd` ei tee mitään | Avaa PowerShell ja aja `powershell -ExecutionPolicy Bypass -File asenna.ps1`. |
 
 ## Datasta
 
-Lähde on eduskunnan avoin rajapinta `https://api.eduskunta.fi/api/v1/taysistunnot/istunnon-aanestykset/`.
-Luvut ovat sellaisenaan rajapinnasta. "Poissa" tarkoittaa, ettei edustaja äänestänyt kyseisessä
-äänestyksessä; se ei kerro syytä.
+Lähde: `https://api.eduskunta.fi/api/v1/taysistunnot/istunnon-aanestykset/`. "Poissa" tarkoittaa,
+ettei edustaja äänestänyt kyseisessä äänestyksessä; se ei kerro syytä.
