@@ -1,8 +1,12 @@
 # Eduskunnan äänestykset
 
-Sivu, joka näyttää eduskunnan täysistuntojen äänestykset. Voit selata äänestyksiä aiheen
-mukaan tai **Kansanedustaja-välilehdellä hakea yksittäisen kansanedustajan nimellä** ja
-katsoa, miten hän on äänestänyt.
+Sivu, joka näyttää eduskunnan täysistuntojen äänestykset. Kaksi välilehteä:
+
+- **Äänestykset** — kaikki äänestykset, jokainen oma korttinsa. Klikkaamalla näet
+  ryhmäjakauman ja nimilistat (ketkä äänestivät Jaa/Ei/Tyhjää/Poissa).
+- **Kansanedustaja** — hae edustaja nimellä ja näet hänen oman koosteensa
+  (Jaa/Ei/Tyhjää/Poissa) sekä tiiviin taulukon jokaisesta äänestyksestä ja siitä,
+  miten hän äänesti.
 
 Data haetaan eduskunnan avoimesta rajapinnasta **GitHubin omilla palvelimilla kerran
 vuorokaudessa** (GitHub Actions, klo 02 UTC). Sivu pysyy ajan tasalla itsestään — omaa
@@ -53,7 +57,7 @@ Tämän jälkeen työnkulku ajaa itsensä joka yö klo 02 UTC.
 
 | Tiedosto | Mitä tekee |
 |---|---|
-| `docs/index.html` | Sivu, joka näyttää datan. Välilehdet: Äänestykset ja Kansanedustaja (nimihaku). |
+| `docs/index.html` | Sivu, joka näyttää datan. Välilehdet: Äänestykset ja Kansanedustaja. |
 | `docs/data.json` | Haettu data. **Syntyy GitHubissa automaattisesti** — ei repossa etukäteen. |
 | `hae-api.js` | Hakee äänestykset rajapinnasta ja kirjoittaa `docs/data.json`. |
 | `.github/workflows/paivita.yml` | GitHub Actions: ajaa haun kerran vuorokaudessa. |
