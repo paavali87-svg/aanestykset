@@ -1,89 +1,100 @@
-// Hakee eduskunnan taysistuntoaanestykset api.eduskunta.fi -rajapinnasta
-// ja kirjoittaa docs/data.json. Ajetaan GitHub Actionsissa joka yo.
+// Hakee taysistuntojen aanestykset eduskunnan rajapinnasta ja kirjoittaa docs/data.json
 const fs = require("node:fs");
 const path = require("node:path");
 
 const JUURI = "https://api.eduskunta.fi/api/v1/taysistunnot/istunnon-aanestykset/";
-const VUODET = (process.env.VUODET || "2026").split(",").map(v => v.trim()).filter(Boolean);
-const DOCS = path.join(__dirname, "docs");
-const TIEDOSTO = path.join(DOCS, "data.json");
-const KOODI = { "Jaa": "J", "Ei": "E", "Poissa": "P" };
+const VUODET = (process.env.VUODET || "2026").split(",").map(s => s.trim()).filter(Boolean);
+const ISTUNTOJA = 220;
 
+const KOODI = { "Jaa": "J", "Ei": "E", "Poissa": "P" };
 function koodi(teksti) {
   const t = String(teksti || "").trim();
   if (KOODI[t]) return KOODI[t];
   if (t.indexOf("Tyhj") === 0) return "T";
   return "?";
 }
-const fi = (o) => (o && typeof o === "object" ? String(o.fi || "") : String(o || ""));
 
 async function hae(url) {
+  let virhe = null;
   for (let y = 0; y < 3; y++) {
-    const v = await fetch(url, { headers: {
-      "Accept": "application/json",
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0 Safari/537.36" } });
-    if (v.ok) return v.json();
-    if (v.status === 404) return null;
-    if (y === 2) throw new Error(url + " palautti " + v.status);
-    await new Promise((r) => setTimeout(r, 1000 * (y + 1)));
+    try {
+      const v = await fetch(url, { headers: { "Accept": "application/json" } });
+      if (v.status === 404) return null;
+      if (!v.ok) throw new Error("HTTP " + v.status);
+      return await v.json();
+    } catch (e) {
+      virhe = e;
+      await new Promise(r => setTimeout(r, 1500 * (y + 1)));
+    }
   }
-}
-function kerro(x, ulos) {
-  if (Array.isArray(x)) { for (const y of x) kerro(y, ulos); }
-  else if (x && x.aanestysnumero !== undefined) ulos.push(x);
+  throw virhe;
 }
 
-async function main() {
-  const indeksi = new Map();
+function jakaumat(r) {
+  const lista = r.eduskuntaryhmaJakaumat || [];
+  return lista.map(x => ({
+    ryhma: String((x.nimi && (x.nimi.fi || x.nimi)) || "").trim(),
+    jaa: +(x.jaa || 0), ei: +(x.ei || 0), tyhjaa: +(x.tyhjia || x.tyhjaa || 0), poissa: +(x.poissa || 0)
+  })).filter(x => x.ryhma);
+}
+
+(async () => {
   const edustajat = [];
-  const kaikki = new Map();
+  const avain = new Map();
+  const aanestykset = [];
 
   for (const vuosi of VUODET) {
-    let loydetty = 0;
-    for (let n = 1; n <= 220; n++) {
-      let data = null;
-      try { data = await hae(JUURI + vuosi + "-" + n); } catch (e) { console.log("  istunto " + n + ": " + e.message); }
-      const rivit = [];
-      kerro(data, rivit);
+    for (let n = 1; n <= ISTUNTOJA; n++) {
+      const data = await hae(JUURI + vuosi + "-" + n);
+      if (!data) continue;
+      const rivit = Array.isArray(data) ? data : (data.rowData || data.items || []);
       if (!rivit.length) continue;
-      loydetty += rivit.length;
+
       for (const r of rivit) {
-        const tulos = r.aanestystulos || {};
+        const tapahtumat = r.aanestystapahtumat || [];
         const aanet = [];
-        for (const t of (r.aanestystapahtumat || [])) {
-          const ryhma = fi(t.edkryhmalyhenne).trim();
-          const avain = t.sukunimi + "|" + t.etunimi + "|" + ryhma;
-          if (!indeksi.has(avain)) {
-            indeksi.set(avain, edustajat.length);
-            edustajat.push({ sukunimi: t.sukunimi, etunimi: t.etunimi, ryhma: ryhma });
+        for (const t of tapahtumat) {
+          const suku = String(t.sukunimi || "").trim();
+          const etu = String(t.etunimi || "").trim();
+          const ryhma = String((t.edkryhmalyhenne && t.edkryhmalyhenne.fi) || "").trim();
+          const k = suku + "|" + etu;
+          let idx = avain.get(k);
+          if (idx === undefined) {
+            idx = edustajat.length;
+            avain.set(k, idx);
+            edustajat.push({ sukunimi: suku, etunimi: etu, ryhma: ryhma });
+          } else if (ryhma) {
+            edustajat[idx].ryhma = ryhma;
           }
-          aanet.push([indeksi.get(avain), koodi(fi(t.kayttaytyminen))]);
+          aanet.push([idx, koodi((t.kayttaytyminen && t.kayttaytyminen.fi) || t.kayttaytyminen)]);
         }
-        const ryhmat = (r.eduskuntaryhmaJakaumat || []).map((g) => ({
-          ryhma: fi(g.nimi), jaa: g.jaa | 0, ei: g.ei | 0, tyhjaa: g.tyhjia | 0, poissa: g.poissa | 0 }));
-        kaikki.set(String(r.id), {
-          id: String(r.id), numero: Number(r.aanestysnumero) || 0,
-          istunto: String(r.istuntonumero || n), pvm: String(r.istuntopvm || "").slice(0, 10),
-          otsikko: fi(r.aanestysotsikko), kohta: fi(r.kohta && r.kohta.otsikko),
-          vaihe: fi(r.kohta && r.kohta.kasittelyvaihenimi),
-          asia: "", asiaUrl: "", poytakirja: "", poytakirjaUrl: "",
-          jaa: tulos.jaa | 0, ei: tulos.ei | 0, tyhjaa: tulos.tyhjia | 0, poissa: tulos.poissa | 0,
-          aanet: aanet, ryhmat: ryhmat });
+        const tulos = r.aanestystulos || {};
+        aanestykset.push({
+          id: String(r.id || (vuosi + "-" + n + "-" + (r.aanestysnumero || aanestykset.length))),
+          pvm: String(r.istuntopvm || "").slice(0, 10),
+          istunto: String(r.istuntonumero || n) + "/" + vuosi,
+          kohta: String((r.kohta && r.kohta.otsikko && r.kohta.otsikko.fi) || "").trim(),
+          otsikko: String((r.aanestysotsikko && r.aanestysotsikko.fi) || r.aanestysotsikko || "").trim(),
+          jaa: +(tulos.jaa || 0), ei: +(tulos.ei || 0),
+          tyhjaa: +(tulos.tyhjia || tulos.tyhjaa || 0), poissa: +(tulos.poissa || 0),
+          ryhmat: jakaumat(r),
+          aanet: aanet
+        });
       }
-      if (n % 20 === 0) console.log("  istunto " + n + ": yhteensa " + loydetty + " aanestysta");
+      console.log(vuosi + "-" + n + ": " + rivit.length + " aanestysta");
     }
-    console.log("Vuosi " + vuosi + ": " + loydetty + " aanestysta");
   }
 
-  const lista = [...kaikki.values()].sort((a, b) =>
-    a.pvm === b.pvm ? b.numero - a.numero : b.pvm.localeCompare(a.pvm));
-  const ulos = { haettu: new Date().toISOString(), lahde: "https://api.eduskunta.fi",
-    vuodet: VUODET, edustajat: edustajat, aanestykset: lista };
-  if (!fs.existsSync(DOCS)) fs.mkdirSync(DOCS, { recursive: true });
-  fs.writeFileSync(TIEDOSTO, JSON.stringify(ulos));
-  let tuntematon = 0;
-  for (const a of lista) for (const x of a.aanet) if (x[1] === "?") tuntematon++;
-  console.log("Valmis: " + lista.length + " aanestysta, " + edustajat.length +
-    " edustajaa, tuntemattomia aania " + tuntematon + ".");
-}
-main().catch((e) => { console.error("VIRHE:", e.message); process.exit(1); });
+  aanestykset.sort((a, b) => (a.pvm < b.pvm ? 1 : a.pvm > b.pvm ? -1 : 0));
+
+  const ulos = {
+    paivitetty: new Date().toISOString(),
+    lahde: JUURI,
+    edustajat: edustajat,
+    aanestykset: aanestykset
+  };
+  const tiedosto = path.join(__dirname, "docs", "data.json");
+  fs.writeFileSync(tiedosto, JSON.stringify(ulos), "utf8");
+  console.log("Kirjoitettu " + tiedosto + ": " + aanestykset.length + " aanestysta, " + edustajat.length + " edustajaa");
+  if (!aanestykset.length) { console.error("VIRHE: ei yhtaan aanestysta"); process.exit(1); }
+})().catch(e => { console.error("VIRHE: " + e.message); process.exit(1); });
