@@ -55,6 +55,14 @@ ul.nimet{list-style:none;margin:0;padding:0;columns:2;column-gap:24px;font-size:
 ul.nimet li{break-inside:avoid;padding:2px 0}
 .ryhma{color:var(--himmea);font-size:12px}
 .tyhjaa{color:var(--himmea);padding:24px 0}
+.edustajakortti{background:var(--kortti);border:1px solid var(--viiva);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.edustajakortti .nimi{font-size:18px;font-weight:600;margin:0 0 4px}
+.aanitaulu td.aihe-sarake{white-space:normal;min-width:220px}
+.aanitaulu td.aani{font-weight:600;text-align:right}
+.aanitaulu td.aani.a-J{color:var(--jaa)}
+.aanitaulu td.aani.a-E{color:var(--ei)}
+.aanitaulu td.aani.a-T{color:var(--tyhja)}
+.aanitaulu td.aani.a-P{color:var(--himmea)}
 footer{margin-top:40px;font-size:12px;color:var(--himmea);border-top:1px solid var(--viiva);padding-top:12px}
 </style>
 </head>
@@ -98,7 +106,7 @@ footer{margin-top:40px;font-size:12px;color:var(--himmea);border-top:1px solid v
 <main id="sisalto"><p class="tyhjaa">Ladataan…</p></main>
 
 <footer>
-  Lähde: eduskunnan avoin rajapinta api.eduskunta.fi. Klikkaa äänestystä nähdäksesi ryhmäjakauman ja nimet.
+  Lähde: eduskunnan avoin rajapinta api.eduskunta.fi. Äänestykset-välilehdellä klikkaa äänestystä nähdäksesi ryhmäjakauman ja nimet.
 </footer>
 </div><script>
 var D = null, nakyma = "aiheet", haku = "", avoin = null, edustaja = 0, rajaus = "";
@@ -141,13 +149,14 @@ function tiedot(a) {
   h += ["J", "E", "T", "P"].map(function (k) { return nimilista(a, k); }).join("");
   return h + '</div>';
 }
-function kortti(a, lisa) {
+function kortti(a) {
   return '<article class="rivi" tabindex="0" data-id="' + esc(a.id) + '">' +
-    '<div class="meta"><span>' + pvm(a.pvm) + '</span><span>Istunto ' + esc(a.istunto) + '</span>' + (lisa || "") + '</div>' +
+    '<div class="meta"><span>' + pvm(a.pvm) + '</span><span>Istunto ' + esc(a.istunto) + '</span></div>' +
     '<p class="aihe">' + esc(a.kohta || "(ei aihetta)") + '</p>' +
     '<p class="otsikko">' + esc(a.otsikko || "") + '</p>' +
     palkki(a) + luvut(a.jaa, a.ei, a.tyhjaa, a.poissa) + (avoin === a.id ? tiedot(a) : "") + '</article>';
 }
+// ---------- Äänestykset-välilehti: isot kortit, joita voi avata ----------
 function piirraAiheet() {
   var q = haku.trim().toLowerCase();
   var lista = q ? D.aanestykset.filter(function (a) {
@@ -155,7 +164,7 @@ function piirraAiheet() {
   }) : D.aanestykset;
   el("#maara").textContent = lista.length + " äänestystä";
   el("#sisalto").innerHTML = lista.length
-    ? lista.map(function (a) { return kortti(a, ""); }).join("")
+    ? lista.map(function (a) { return kortti(a); }).join("")
     : '<p class="tyhjaa">Ei osumia haulla ”' + esc(haku) + '”.</p>';
 }
 function taytaEdustajat(q) {
@@ -176,26 +185,32 @@ function taytaEdustajat(q) {
   }
   return lista.length;
 }
+// ---------- Kansanedustaja-välilehti: edustajan oma profiili + tiivis äänitaulukko ----------
 function piirraEdustaja() {
   var e = D.edustajat[edustaja], rivit = [];
   for (var i = 0; i < D.aanestykset.length; i++) {
     var a = D.aanestykset[i];
-    var p = null;
-    for (var j = 0; j < a.aanet.length; j++) { if (a.aanet[j][0] === edustaja) { p = a.aanet[j]; break; } }
-    if (p) rivit.push({ a: a, k: p[1] });
+    for (var j = 0; j < a.aanet.length; j++) {
+      if (a.aanet[j][0] === edustaja) { rivit.push({ a: a, k: a.aanet[j][1] }); break; }
+    }
   }
-  var nayta = rajaus ? rivit.filter(function (r) { return r.k === rajaus; }) : rivit;
   var t = { J: 0, E: 0, T: 0, P: 0 };
   for (var m = 0; m < rivit.length; m++) { if (rivit[m].k in t) t[rivit[m].k]++; }
+  var nayta = rajaus ? rivit.filter(function (r) { return r.k === rajaus; }) : rivit;
   el("#maara2").textContent = nayta.length + " / " + rivit.length + " äänestystä";
-  el("#sisalto").innerHTML =
-    '<div class="rivi" style="cursor:default"><p class="aihe">' + esc(e.sukunimi) + ' ' + esc(e.etunimi) +
-    ' <span class="ryhma">' + esc(e.ryhma) + '</span></p>' + luvut(t.J, t.E, t.T, t.P) + '</div>' +
-    (nayta.length
-      ? nayta.map(function (r) {
-          return kortti(r.a, '<span style="font-weight:600;color:var(--ink)">Äänesti: ' + NIMI[r.k] + '</span>');
-        }).join("")
-      : '<p class="tyhjaa">Ei äänestyksiä tällä rajauksella.</p>');
+
+  var profiili = '<div class="edustajakortti"><p class="nimi">' + esc(e.sukunimi) + ' ' + esc(e.etunimi) +
+    ' <span class="ryhma">' + esc(e.ryhma) + '</span></p>' + luvut(t.J, t.E, t.T, t.P) + '</div>';
+
+  var taulu = nayta.length
+    ? '<div class="taulukkokuori"><table class="aanitaulu"><thead><tr><th>Päivämäärä</th><th>Aihe</th><th class="aani">Ääni</th></tr></thead><tbody>' +
+      nayta.map(function (r) {
+        return '<tr><td>' + pvm(r.a.pvm) + '</td><td class="aihe-sarake">' +
+          esc(r.a.kohta || r.a.otsikko || "(ei aihetta)") + '</td><td class="aani a-' + r.k + '">' + NIMI[r.k] + '</td></tr>';
+      }).join("") + '</tbody></table></div>'
+    : '<p class="tyhjaa">Ei äänestyksiä tällä rajauksella.</p>';
+
+  el("#sisalto").innerHTML = profiili + taulu;
 }
 function piirra() {
   el("#aiheet-tyokalut").hidden = nakyma !== "aiheet";
@@ -205,10 +220,11 @@ function piirra() {
   if (nakyma === "aiheet") piirraAiheet(); else piirraEdustaja();
 }
 function avaaSulje(t) {
+  if (nakyma !== "aiheet") return false;
   var r = t && t.closest ? t.closest(".rivi[data-id]") : null;
   if (!r) return false;
   avoin = (avoin === r.dataset.id) ? null : r.dataset.id;
-  piirra();
+  piirraAiheet();
   return true;
 }
 document.addEventListener("click", function (ev) { if (D) avaaSulje(ev.target); });
@@ -217,13 +233,12 @@ document.addEventListener("keydown", function (ev) {
   if (avaaSulje(ev.target)) ev.preventDefault();
 });
 el("#v-aiheet").onclick = function () { if (!D) return; nakyma = "aiheet"; avoin = null; piirra(); };
-el("#v-edustaja").onclick = function () { if (!D) return; nakyma = "edustaja"; avoin = null; piirra(); };
+el("#v-edustaja").onclick = function () { if (!D) return; nakyma = "edustaja"; piirra(); };
 el("#haku").oninput = function (e) { if (!D) return; haku = e.target.value; avoin = null; piirraAiheet(); };
-el("#valEdustaja").onchange = function (e) { edustaja = +e.target.value; avoin = null; piirraEdustaja(); };
-el("#valRajaus").onchange = function (e) { rajaus = e.target.value; avoin = null; piirraEdustaja(); };
+el("#valEdustaja").onchange = function (e) { edustaja = +e.target.value; piirraEdustaja(); };
+el("#valRajaus").onchange = function (e) { rajaus = e.target.value; piirraEdustaja(); };
 el("#hakuEdustaja").oninput = function (e) {
   if (!D) return;
-  avoin = null;
   if (taytaEdustajat(e.target.value) > 0) { piirraEdustaja(); }
   else {
     el("#maara2").textContent = "";
